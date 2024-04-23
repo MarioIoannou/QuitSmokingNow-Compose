@@ -65,4 +65,5 @@ class CigaretteCravingViewModel : ViewModel() {
     }
 
     // Hello this is a comment
+    // Hello this is a comment
 }
