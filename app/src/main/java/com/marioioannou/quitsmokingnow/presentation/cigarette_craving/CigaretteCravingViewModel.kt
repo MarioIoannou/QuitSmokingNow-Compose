@@ -63,4 +63,6 @@ class CigaretteCravingViewModel : ViewModel() {
         _progress.value = progress
         _celebrate.postValue(celebrate)
     }
+
+    // Hello this is a comment
 }
