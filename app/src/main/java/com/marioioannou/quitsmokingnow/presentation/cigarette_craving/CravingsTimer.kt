@@ -1,5 +1,6 @@
 package com.marioioannou.quitsmokingnow.presentation.cigarette_craving
 
+import android.media.MediaPlayer
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -27,10 +29,13 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,101 +45,80 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.marioioannou.quitsmokingnow.R
 import com.marioioannou.quitsmokingnow.presentation.cigarette_craving.utils.Constants
 import com.marioioannou.quitsmokingnow.presentation.cigarette_craving.utils.Constants.formatTime
 import nl.dionsegijn.konfetti.KonfettiView
 import nl.dionsegijn.konfetti.models.Shape
 
-//
-//@Composable
-//fun CravingsTimer(
-//        totalTime: Long,
-//        handleColor: Color,
-//        inactiveColor: Color,
-//        activeColor: Color,
-//        modifier: Modifier = Modifier,
-//        initialValue: Float = 1f,
-//        strokeWidth: Dp = 5.dp
-//    ){
-//
-//    // Size of the composable
-//    var size by remember {
-//        mutableStateOf(IntSize.Zero)
-//    }
-//
-//    var value by remember {
-//        mutableFloatStateOf(initialValue)
-//    }
-//
-//    var currentTime by remember {
-//        mutableLongStateOf(totalTime)
-//    }
-//
-//    var isTimeRunning by remember {
-//        mutableStateOf(false)
-//    }
-//}
-
 @Composable
 fun CravingsTimer(
     time: String,
     progress: Float,
     isPlaying: Boolean,
+    isLottiePlaying: Boolean,
     celebrate: Boolean,
     optionSelected: () -> Unit
 ) {
+
+    //var isPLottiePlaying by remember { mutableStateOf(true) }
+
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         if (celebrate) {
-            ShowCelebration()
+            //ShowCelebration()
         }
 
-        Text(
-            text = "Timer",
-            color = androidx.compose.ui.graphics.Color.Magenta,
-            fontSize = 25.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 50.dp, bottom = 20.dp)
-
-        )
-
-        Text(
-            text = "1 minute to launch...",
-            color = androidx.compose.ui.graphics.Color.Magenta,
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        )
-
-        Text(
-            text = "Click to start or stop countdown",
-            color = androidx.compose.ui.graphics.Color.Magenta,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+//        Text(
+//            text = "Timer",
+//            color = androidx.compose.ui.graphics.Color.Magenta,
+//            fontSize = 25.sp,
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 50.dp, bottom = 20.dp)
+//
+//        )
+//
+//        Text(
+//            text = "1 minute to launch...",
+//            color = androidx.compose.ui.graphics.Color.Magenta,
+//            fontSize = 16.sp,
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(20.dp)
+//        )
+//
+//        Text(
+//            text = "Click to start or stop countdown",
+//            color = androidx.compose.ui.graphics.Color.Magenta,
+//            fontSize = 14.sp,
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//        )
 
         CountDownIndicator(
-            Modifier.padding(top = 50.dp),
             progress = progress,
             time = time,
-            size = 250,
-            stroke = 20
+            size = 350,
+            stroke = 15,
+            isLottiePlaying = isLottiePlaying
         )
 
         CountDownButton(
             modifier = Modifier
-                .padding(top = 70.dp)
                 .size(70.dp),
+            isLottiePlaying = isPlaying,
             isPlaying = isPlaying
         ) {
             optionSelected()
@@ -146,48 +130,82 @@ fun CravingsTimer(
 
 @Composable
 fun CountDownIndicator(
-    modifier: Modifier = Modifier,
     progress: Float,
     time: String,
     size: Int,
-    stroke: Int
+    stroke: Int,
+    isLottiePlaying: Boolean
 ) {
+
+    val context = LocalContext.current
+
+//    val mediaPlayer = remember {
+//        MediaPlayer.create(context, R.raw.calm_track).apply {
+//            isLooping = true
+//        }
+//    }
+//
+//    DisposableEffect(key1 = isLottiePlaying) {
+//        if (isLottiePlaying) {
+//            if (!mediaPlayer.isPlaying) {
+//                mediaPlayer.start()
+//            }
+//        } else {
+//            if (mediaPlayer.isPlaying) {
+//                mediaPlayer.pause()
+//                mediaPlayer.seekTo(0)
+//            }
+//        }
+//
+//        onDispose {
+//            if (mediaPlayer.isPlaying) {
+//                mediaPlayer.stop()
+//            }
+//            mediaPlayer.release()
+//        }
+//    }
 
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
 
-    Column(modifier = modifier) {
-        Box {
+    Box(
+        modifier = Modifier.size(size.dp * 1.5f).padding(top = 100.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.calm_anim_waves_bigger))
 
-            CircularProgressIndicatorBackGround(
-                modifier = Modifier
-                    .height(size.dp)
-                    .width(size.dp),
-                color = colorResource(R.color.teal_700),
-                stroke
-            )
+        LottieAnimation(
+            modifier = Modifier.size(size.dp * 1.5f),
+            alignment = Alignment.Center,
+            composition = composition,
+            isPlaying = isLottiePlaying,
+            iterations = LottieConstants.IterateForever
+        )
 
-            CircularProgressIndicator(
-                progress = animatedProgress,
-                modifier = Modifier
-                    .height(size.dp)
-                    .width(size.dp),
-                color = colorResource(R.color.teal_200),
-                strokeWidth = stroke.dp,
-            )
+        CircularProgressIndicatorBackGround(
+            modifier = Modifier
+                .size(size.dp/1.3f),
+            color = colorResource(R.color.dark_cyan),
+            stroke = stroke
+        )
 
-            Column(modifier = Modifier.align(Alignment.Center)) {
-                Text(
-                    text = time,
-                    color = Color.Blue,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
+        CircularProgressIndicator(
+            progress = animatedProgress,
+            modifier = Modifier
+                .size(size.dp/1.3f),
+            color = colorResource(R.color.teal_200),
+            strokeWidth = stroke.dp,
+        )
+
+        Text(
+            text = time,
+            //color = colorResource(R.color.teal_700),
+            color = colorResource(R.color.darker_dark_cyan),
+            fontSize = 50.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -225,6 +243,7 @@ fun CircularProgressIndicatorBackGround(
 fun CountDownButton(
     modifier: Modifier = Modifier,
     isPlaying: Boolean,
+    isLottiePlaying: Boolean,
     optionSelected: () -> Unit
 ) {
 
@@ -233,7 +252,7 @@ fun CountDownButton(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(top = 90.dp)
+            .padding(top = 50.dp)
     ) {
 
         Button(
@@ -248,7 +267,7 @@ fun CountDownButton(
             shape = RoundedCornerShape(25.dp),
 
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = colorResource(id = R.color.teal_700),
+                backgroundColor = colorResource(id = R.color.dark_cyan),
                 contentColor = colorResource(id = R.color.white),
             ),
 
@@ -274,8 +293,10 @@ fun ShowCelebration() {
     AndroidView(
 
         modifier = Modifier
-            .size(80.dp, 50.dp)
-            .padding(top = 20.dp),
+            //.size(80.dp, 50.dp)
+            .fillMaxHeight()
+            .fillMaxWidth(),
+            //.padding(top = 20.dp),
 
         factory = { ctx ->
 

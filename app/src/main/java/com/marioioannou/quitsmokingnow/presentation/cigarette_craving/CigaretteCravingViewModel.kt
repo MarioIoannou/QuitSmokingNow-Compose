@@ -9,6 +9,7 @@ import com.marioioannou.quitsmokingnow.presentation.cigarette_craving.utils.Cons
 
 class CigaretteCravingViewModel : ViewModel() {
 
+    // Timer
     private var countDownTimer: CountDownTimer? = null
 
     private val _time = MutableLiveData(Constants.TIME_COUNTDOWN.formatTime())

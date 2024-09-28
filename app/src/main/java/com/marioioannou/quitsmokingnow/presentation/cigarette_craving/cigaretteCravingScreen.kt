@@ -17,7 +17,7 @@ fun CigaretteCravingScreen(){
     val isPlaying by viewModel.isPlaying.observeAsState(false)
     val celebrate by viewModel.celebrate.observeAsState(false)
 
-    CravingsTimer(time = time, progress = progress, isPlaying = isPlaying, celebrate = celebrate) {
+    CravingsTimer(time = time, progress = progress, isPlaying = isPlaying, isLottiePlaying = isPlaying, celebrate = celebrate) {
         viewModel.handleCountDownTimer()
     }
 
