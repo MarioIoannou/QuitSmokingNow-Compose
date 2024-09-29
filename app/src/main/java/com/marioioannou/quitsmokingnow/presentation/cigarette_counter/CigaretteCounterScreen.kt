@@ -26,6 +26,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marioioannou.quitsmokingnow.R
 import com.marioioannou.quitsmokingnow.ui.theme.ButtonBackground
@@ -48,9 +51,10 @@ import java.nio.file.WatchEvent
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CigaretteCounterScreen() {
+fun CigaretteCounterScreen(viewModel: CigaretteCounterViewModel = hiltViewModel()) {
 
-    val viewModel: CigaretteCounterViewModel = viewModel()
+    //val viewModel: CigaretteCounterViewModel = viewModel()
+    val count by viewModel.count.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -87,7 +91,8 @@ fun CigaretteCounterScreen() {
             )
 
             Text(
-                text = viewModel.cigaretteCounterState.cigaretteCount.toString(),// TODO
+                //text = viewModel.cigaretteCounterState.cigaretteCount.toString(),// TODO
+                text = viewModel.count.toString(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 128.sp,
                 color = Color.White,
@@ -117,7 +122,7 @@ fun CigaretteCounterScreen() {
                 .align(Alignment.BottomCenter)
                 .padding(16.dp, 16.dp, 16.dp, 96.dp)
                 .height(100.dp),
-            onClick = { viewModel.increaseCount() },
+            onClick = { viewModel.addCigarette() },
             colors = ButtonDefaults.buttonColors(backgroundColor = ButtonBackground)
         ) {
             Image(
@@ -127,6 +132,14 @@ fun CigaretteCounterScreen() {
                     .padding(12.dp)
                     .fillMaxSize()
             )
+        }
+
+
+        Button(
+            onClick = { viewModel.removeCigarette() },
+            enabled = count > 0
+        ) {
+            Text(text = "Decrease")
         }
 
     }

@@ -32,7 +32,9 @@ import com.marioioannou.quitsmokingnow.presentation.cigarette_craving.CigaretteC
 import com.marioioannou.quitsmokingnow.ui.theme.CyanSecondary
 import com.marioioannou.quitsmokingnow.ui.theme.GreenPrimary
 import com.marioioannou.quitsmokingnow.ui.theme.QuitSmokingNowTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)

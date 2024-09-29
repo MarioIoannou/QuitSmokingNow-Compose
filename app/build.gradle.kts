@@ -89,7 +89,7 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.48.1")
 
     // Proto Datastore Preference
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // Room Local DB
     implementation("androidx.room:room-runtime:2.6.1")
